@@ -48,7 +48,7 @@ def start_server():
             #print(f"\nDireccion: {ip} \nPuerto: {port}")
             while True:
                 client_socket, client_address = server_socket.accept()
-                connection_time = time.strftime('%Y-%m-%d %H:%M:%S')
+                connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
                 print(f"\nConexion: {client_address} \nTiempo: {connection_time}")
                 client_thread = threading.Thread(target=handle_client, args=(client_socket,))
                 client_thread.start()
@@ -62,7 +62,7 @@ def connect_to_remote_server(local_ipv4):
             remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
 
         for i, (ip, port) in enumerate(remote_servers, 1):
-            print(f"{i}. {ip}:{port}")
+            print(f"{i} : dir {ip} puerto {port}")
 
         choice = int(input("\nElija con quien desea la coneccion"))
         if 1 <= choice <= len(remote_servers):
@@ -76,7 +76,7 @@ def connect_to_remote_server(local_ipv4):
                     message = input("\nDesea enviar un texto (0 si desea salir):")
                     if message.lower() == '0':
                         break
-                    message_with_timestamp = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}"
+                    message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {message}"
                     client_socket.sendall(message_with_timestamp.encode())
                     save_message("localhost", message_with_timestamp)
                     response = client_socket.recv(1024)
@@ -108,7 +108,7 @@ def handle_client(client_socket):
 
 def save_message(ip_address, message):
     with open("almacena.txt", "a") as file:
-        file.write(f"IP: {ip_address}, Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}, Mensaje: {message}\n")
+        file.write(f"IP: {ip_address}, Timestamp: {time.strftime('%Y/%m/%d %H:%M:%S')}, Mensaje: {message}\n")
 
 def print_history():
     try:
