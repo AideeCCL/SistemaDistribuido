@@ -45,7 +45,6 @@ def start_server():
 
             server_socket.bind((ip, port))
             server_socket.listen(5)
-            #print(f"\nDireccion: {ip} \nPuerto: {port}")
             while True:
                 client_socket, client_address = server_socket.accept()
                 connection_time = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -80,7 +79,7 @@ def connect_to_remote_server(local_ipv4):
                     client_socket.sendall(message_with_timestamp.encode())
                     save_message("localhost", message_with_timestamp)
                     response = client_socket.recv(1024)
-                    #print("Respuesta del servidor remoto:", response.decode())
+                    print("Envio correcto", response.decode())
         else:
             print("Error")
     except Exception as e:
