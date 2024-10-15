@@ -61,21 +61,21 @@ def connect_to_remote_server(local_ipv4):
         with open("dir.txt", "r") as file:
             remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
 
-        print("\nSeleccione el servidor remoto:")
+        print("\nElija con quien desea la coneccion:")
         for i, (ip, port) in enumerate(remote_servers, 1):
             print(f"{i}. {ip}:{port}")
 
-        choice = int(input("Seleccione una opción: "))
+        choice = int(input("\nOpciones..."))
         if 1 <= choice <= len(remote_servers):
             remote_address, port = remote_servers[choice - 1]
             port = int(port)
 
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
                 client_socket.connect((remote_address, port))
-                print("Conexión establecida con el servidor remoto en", remote_address, "en el puerto", port)
+                print("Direccion IP conectada:", remote_address, "\nPuerto ", port)
                 while True:
-                    message = input("Introduce un mensaje para enviar al servidor remoto (o 'exit' para salir): ")
-                    if message.lower() == 'exit':
+                    message = input("\nDesea enviar un texto (0 si desea salir):")
+                    if message.lower() == '0':
                         break
                     message_with_timestamp = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}"
                     client_socket.sendall(message_with_timestamp.encode())
@@ -83,9 +83,9 @@ def connect_to_remote_server(local_ipv4):
                     response = client_socket.recv(1024)
                     print("Respuesta del servidor remoto:", response.decode())
         else:
-            print("Opción inválida.")
+            print("Error")
     except Exception as e:
-        print("Error al conectar con el servidor remoto:", e)
+        print("Error, no se conecta", e)
 
 def handle_client(client_socket):
     try:
@@ -102,10 +102,10 @@ def handle_client(client_socket):
                 break
             client_socket.sendall("Mensaje recibido".encode())
     except Exception as e:
-        print("Error al manejar la conexión del cliente:", e)
+        print("Error", e)
     finally:
         client_socket.close()
-        print("Conexión con el cliente cerrada.")
+        print("Fin")
 
 def save_message(ip_address, message):
     with open("almacena.txt", "a") as file:
@@ -116,6 +116,6 @@ def print_history():
         with open("almacena.txt", "r") as file:
             print(file.read())
     except FileNotFoundError:
-        print("No se encontró ningún historial de mensajes.")
-
+        print("VACIO")
+        
 main()
