@@ -108,13 +108,14 @@ def handle_client(client_socket):
         print("Conexión con el cliente cerrada.")
 
 def save_message(ip_address, message):
-    with open("messages.txt", "a") as file:
+    with open("almacena.txt", "a") as file:
         file.write(f"IP: {ip_address}, Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}, Mensaje: {message}\n")
 
 def print_history():
     try:
-        with open("messages.txt", "r") as file:
+        with open("almacena.txt", "r") as file:
             print(file.read())
     except FileNotFoundError:
         print("No se encontró ningún historial de mensajes.")
+
 main()
