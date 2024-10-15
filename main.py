@@ -16,16 +16,16 @@ def main():
         opc = input("\nElija la opcion a realizar:")
 
         if opc == '1':
-            instruccion_datos(coneccion())
+            instruccion_datos(conexion())
         elif opc == '2':
             print("\nConecciones")
-            print_history()
+            guardados_datos()
         elif opc == '3':
             break
         else:
             print("\nError")
 
-def coneccion():
+def conexion():
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))
@@ -38,7 +38,7 @@ def coneccion():
 def servidor():
     try:
         with open("catalogo.txt", "r") as file:
-            server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == coneccion()]
+            server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == conexion()]
 
         if server_info:
             ip, port = server_info[0]
@@ -73,14 +73,14 @@ def instruccion_datos(local_ipv4):
                 conecta_cliente.connect((remote_address, port))
                 print("Direccion IP conectada:", remote_address, "\nPuerto ", port)
                 while True:
-                    message = input("\nDesea enviar un dato (0 si desea salir):")
-                    if message.lower() == '0':
+                    instruccion = input("\nDesea enviar un dato (0 si desea salir):")
+                    if instruccion.lower() == '0':
                         break
-                    message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {message}"
+                    message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {instruccion}"
                     conecta_cliente.sendall(message_with_timestamp.encode())
-                    save_message(local_ipv4, message_with_timestamp)
-                    response = conecta_cliente.recv(1024)
-                    print("\n", response.decode())
+                    almacen_datos(local_ipv4, message_with_timestamp)
+                    respuestad = conecta_cliente.recv(1024)
+                    print("\n", respuestad.decode())
         else:
             print("Error")
     except Exception as e:
@@ -89,15 +89,15 @@ def instruccion_datos(local_ipv4):
 def cliente(conecta_cliente):
     try:
         while True:
-            data = conecta_cliente.recv(1024)
-            if not data:
+            datoc = conecta_cliente.recv(1024)
+            if not datoc:
                 break
-            print("Dato entrante", data.decode())
-            if '[' in data.decode() and ']' in data.decode():
-                timestamp = data.decode().split('[')[1].split(']')[0]
+            print("Dato entrante", datoc.decode())
+            if '[' in datoc.decode() and ']' in datoc.decode():
+                timestamp = datoc.decode().split('[')[1].split(']')[0]
                 print("Timestamp:", timestamp)
-            save_message(conecta_cliente.getpeername()[0], data.decode())
-            if data.decode().strip().lower() == '0':
+            almacen_datos(conecta_cliente.getpeername()[0], datoc.decode())
+            if datoc.decode().strip().lower() == '0':
                 break
             conecta_cliente.sendall("Dato recibido".encode())
     except Exception as e:
@@ -106,11 +106,11 @@ def cliente(conecta_cliente):
         conecta_cliente.close()
         print("Fin")
 
-def save_message(ip_address, message):
+def almacen_datos(ip_address, instruccion):
     with open("almacena.txt", "a") as file:
-        file.write(f"Datos: {message}, Dir IP: {ip_address}, Timestamp: {time.strftime('%Y/%m/%d %H:%M:%S')}\n")
+        file.write(f"Datos: {instruccion}, Dir IP: {ip_address}, Timestamp: {time.strftime('%Y/%m/%d %H:%M:%S')}\n")
 
-def print_history():
+def guardados_datos():
     try:
         with open("almacena.txt", "r") as file:
             print(file.read())
