@@ -10,13 +10,13 @@ def main():
     server_thread.start()
 
     while True:
-	print("\nSistema Distribuido")
-	print("_________________________________________")
-        print("\nLista de opciones:")
-        print("1. Conectarse a un servidor remoto")
-        print("2. Mostrar historial de mensajes")
-        print("3. Salir\n")
-	print("_________________________________________")
+	printf("\nSistema Distribuido")
+	printf("_________________________________________")
+        printf("\nLista de opciones:")
+        printf("1. Conectarse a un servidor remoto")
+        printf("2. Mostrar historial de mensajes")
+        printf("3. Salir\n")
+	printf("_________________________________________")
 
         opc = input("\nElija la opcion a realizar: ")
 
