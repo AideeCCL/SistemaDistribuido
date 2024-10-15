@@ -80,7 +80,7 @@ def connect_to_remote_server(local_ipv4):
                     client_socket.sendall(message_with_timestamp.encode())
                     save_message("localhost", message_with_timestamp)
                     response = client_socket.recv(1024)
-                    print("Respuesta del servidor remoto:", response.decode())
+                    print("\n", response.decode())
         else:
             print("Error")
     except Exception as e:
@@ -95,7 +95,7 @@ def handle_client(client_socket):
             print("Mensaje entrante", data.decode())
             if '[' in data.decode() and ']' in data.decode():
                 timestamp = data.decode().split('[')[1].split(']')[0]
-                print("Timestamp del mensaje:", timestamp)
+                print("Timestamp:", timestamp)
             save_message(client_socket.getpeername()[0], data.decode())
             if data.decode().strip().lower() == '0':
                 break
