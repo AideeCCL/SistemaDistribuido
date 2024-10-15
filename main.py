@@ -10,13 +10,11 @@ def main():
     server_thread.start()
 
     while True:
-	printf("\nSistema Distribuido")
-	printf("_________________________________________")
-        printf("\nLista de opciones:")
-        printf("1. Conectarse a un servidor remoto")
-        printf("2. Mostrar historial de mensajes")
-        printf("3. Salir\n")
-	printf("_________________________________________")
+        print("\nSistema Distribuido")
+        print("-----------------------------------------")
+        print("\nLista de opciones:")
+        print("1.Conexion\n2.Conversacion\n3.Salir")
+        print("-----------------------------------------")
 
         opc = input("\nElija la opcion a realizar: ")
 
@@ -26,6 +24,7 @@ def main():
             print("\nConecciones:")
             print_history()
         elif opc == '3':
+            print(" ")
             break
         else:
             print("\nError")
@@ -48,7 +47,7 @@ def start_server():
             while True:
                 client_socket, client_address = server_socket.accept()
                 connection_time = time.strftime('%Y-%m-%d %H:%M:%S')
-                printf("\nDireccion: {client_address} \nTiempo: {connection_time}")
+                print("\nDireccion: {client_address} \nTiempo: {connection_time}")
                 client_thread = threading.Thread(target=handle_client, args=(client_socket,))
                 client_thread.start()
     except Exception as e:
@@ -62,7 +61,7 @@ def connect_to_remote_server(local_ipv4):
 
         print("\nElija la direccion a la que desee entrar:")
         for i, (ip, port) in enumerate(remote_servers, 1):
-            printf("{i}. {ip}:{port}")
+            print("{i}. {ip}:{port}")
 
         opc = int(input("\nNumero de direccion: "))
         if 1 <= opc <= len(remote_servers):
@@ -71,7 +70,7 @@ def connect_to_remote_server(local_ipv4):
 
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
                 client_socket.connect((remote_address, port))
-                print("Conexión con", remote_address, "del puerto", port)
+                print("Conexion con", remote_address, "del puerto", port)
 
                 while True:
                     message = input("\nMensaje\n(pon 0 para salir): ")
@@ -107,7 +106,7 @@ def handle_client(client_socket):
         print("/nError", e)
     finally:
         client_socket.close()
-        print("Conexión con el cliente cerrada.")
+        print("Conexion con el cliente cerrada.")
 
 def save_message(ip_address, message):
     with open("Almacen.txt", "a") as file:
