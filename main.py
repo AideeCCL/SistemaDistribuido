@@ -31,7 +31,7 @@ def main():
 
 def start_server():
     try:
-        with open("remote_servers.txt", "r") as file:
+        with open("dir.txt", "r") as file:
             server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == get_ipv4()]
 
         if server_info:
@@ -58,7 +58,7 @@ def start_server():
 
 def connect_to_remote_server(local_ipv4):
     try:
-        with open("remote_servers.txt", "r") as file:
+        with open("dir.txt", "r") as file:
             remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
 
         print("\nSeleccione el servidor remoto:")
