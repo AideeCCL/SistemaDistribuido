@@ -117,6 +117,4 @@ def print_history():
             print(file.read())
     except FileNotFoundError:
         print("No se encontró ningún historial de mensajes.")
-
-if __name__ == "__main__":
-    main()
+main()
