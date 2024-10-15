@@ -98,7 +98,7 @@ def handle_client(client_socket):
             save_message(client_socket.getpeername()[0], data.decode())
             if data.decode().strip().lower() == '0':
                 break
-            #client_socket.sendall("Mensaje recibido".encode())
+            client_socket.sendall("".encode())
     except Exception as e:
         print("Error", e)
     finally:
