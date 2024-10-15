@@ -13,7 +13,7 @@ def main():
     while True:
         print("\nSistema Distribuido")
         print("-----------------------------------------")
-        print("\nLista de opciones:")
+        print("Lista de opciones:")
         print("1.Conexion\n2.Conversacion\n3.Salir")
         print("-----------------------------------------")
 
@@ -45,7 +45,7 @@ def start_server():
 
             server_socket.bind((ip, port))
             server_socket.listen(5)
-            print(f"\nDireccion: {ip} \nPuerto: {port}")
+            #print(f"\nDireccion: {ip} \nPuerto: {port}")
             while True:
                 client_socket, client_address = server_socket.accept()
                 connection_time = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -61,11 +61,10 @@ def connect_to_remote_server(local_ipv4):
         with open("dir.txt", "r") as file:
             remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
 
-        print("\nElija con quien desea la coneccion:")
         for i, (ip, port) in enumerate(remote_servers, 1):
             print(f"{i}. {ip}:{port}")
 
-        choice = int(input("\nOpciones..."))
+        choice = int(input("\nElija con quien desea la coneccion"))
         if 1 <= choice <= len(remote_servers):
             remote_address, port = remote_servers[choice - 1]
             port = int(port)
@@ -81,7 +80,7 @@ def connect_to_remote_server(local_ipv4):
                     client_socket.sendall(message_with_timestamp.encode())
                     save_message("localhost", message_with_timestamp)
                     response = client_socket.recv(1024)
-                    print("Respuesta del servidor remoto:", response.decode())
+                    #print("Respuesta del servidor remoto:", response.decode())
         else:
             print("Error")
     except Exception as e:
@@ -93,14 +92,14 @@ def handle_client(client_socket):
             data = client_socket.recv(1024)
             if not data:
                 break
-            print("Mensaje recibido del cliente:", data.decode())
+            print("Mensaje entrante:", data.decode())
             if '[' in data.decode() and ']' in data.decode():
                 timestamp = data.decode().split('[')[1].split(']')[0]
-                print("Timestamp del mensaje:", timestamp)
+                #print("Timestamp del mensaje:", timestamp)
             save_message(client_socket.getpeername()[0], data.decode())
-            if data.decode().strip().lower() == 'exit':
+            if data.decode().strip().lower() == '0':
                 break
-            client_socket.sendall("Mensaje recibido".encode())
+            #client_socket.sendall("Mensaje recibido".encode())
     except Exception as e:
         print("Error", e)
     finally:
@@ -117,5 +116,5 @@ def print_history():
             print(file.read())
     except FileNotFoundError:
         print("VACIO")
-        
+
 main()
