@@ -50,10 +50,10 @@ def servidor():
             server_socket.bind((ip, port))
             server_socket.listen(5)
             while True:
-                client_socket, client_address = server_socket.accept()
+                conecta_cliente, client_address = server_socket.accept()
                 connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
                 print(f"\nConexion: {client_address} \nTiempo: {connection_time}")
-                client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+                client_thread = threading.Thread(target=cliente, args=(conecta_cliente,))
                 client_thread.start()
     except Exception as e:
         print("\nError", e)
@@ -69,41 +69,41 @@ def instruccion_datos(local_ipv4):
             remote_address, port = remote_servers[choice - 1]
             port = int(port)
 
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-                client_socket.connect((remote_address, port))
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conecta_cliente:
+                conecta_cliente.connect((remote_address, port))
                 print("Direccion IP conectada:", remote_address, "\nPuerto ", port)
                 while True:
                     message = input("\nDesea enviar un dato (0 si desea salir):")
                     if message.lower() == '0':
                         break
                     message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {message}"
-                    client_socket.sendall(message_with_timestamp.encode())
+                    conecta_cliente.sendall(message_with_timestamp.encode())
                     save_message(local_ipv4, message_with_timestamp)
-                    response = client_socket.recv(1024)
+                    response = conecta_cliente.recv(1024)
                     print("\n", response.decode())
         else:
             print("Error")
     except Exception as e:
         print("Error, no se conecta", e)
 
-def handle_client(client_socket):
+def cliente(conecta_cliente):
     try:
         while True:
-            data = client_socket.recv(1024)
+            data = conecta_cliente.recv(1024)
             if not data:
                 break
             print("Dato entrante", data.decode())
             if '[' in data.decode() and ']' in data.decode():
                 timestamp = data.decode().split('[')[1].split(']')[0]
                 print("Timestamp:", timestamp)
-            save_message(client_socket.getpeername()[0], data.decode())
+            save_message(conecta_cliente.getpeername()[0], data.decode())
             if data.decode().strip().lower() == '0':
                 break
-            client_socket.sendall("Dato recibido".encode())
+            conecta_cliente.sendall("Dato recibido".encode())
     except Exception as e:
         print("Error", e)
     finally:
-        client_socket.close()
+        conecta_cliente.close()
         print("Fin")
 
 def save_message(ip_address, message):
