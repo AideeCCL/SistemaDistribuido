@@ -2,19 +2,7 @@ import socket
 import time
 import threading
 
-def get_ipv4():
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
-            ip_address = s.getsockname()[0]
-            return ip_address
-    except Exception as e:
-        print("Se ha detectado un error:", e)
-        return None
-
 def main():
-    ipv4 = get_ipv4()
-
     server_thread = threading.Thread(target=start_server)
     server_thread.start()
 
@@ -28,7 +16,7 @@ def main():
         opc = input("\nElija la opcion a realizar:")
 
         if opc == '1':
-            connect_to_remote_server(ipv4)
+            connect_to_remote_server(coneccion())
         elif opc == '2':
             print("\nConecciones")
             print_history()
@@ -37,10 +25,20 @@ def main():
         else:
             print("\nError")
 
+def coneccion():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            ip_address = s.getsockname()[0]
+            return ip_address
+    except Exception as e:
+        print("Se ha detectado un error:", e)
+        return None
+
 def start_server():
     try:
         with open("catalogo.txt", "r") as file:
-            server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == get_ipv4()]
+            server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == coneccion()]
 
         if server_info:
             ip, port = server_info[0]
