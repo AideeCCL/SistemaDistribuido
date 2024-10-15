@@ -64,7 +64,7 @@ def connect_to_remote_server(local_ipv4):
         for i, (ip, port) in enumerate(remote_servers, 1):
             print(f"{i} : dir {ip} puerto {port}")
 
-        choice = int(input("\nElija con quien desea la coneccion"))
+        choice = int(input("\nElija con quien desea la coneccion:"))
         if 1 <= choice <= len(remote_servers):
             remote_address, port = remote_servers[choice - 1]
             port = int(port)
@@ -73,7 +73,7 @@ def connect_to_remote_server(local_ipv4):
                 client_socket.connect((remote_address, port))
                 print("Direccion IP conectada:", remote_address, "\nPuerto ", port)
                 while True:
-                    message = input("\nDesea enviar un texto (0 si desea salir):")
+                    message = input("\nDesea enviar un dato (0 si desea salir):")
                     if message.lower() == '0':
                         break
                     message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {message}"
@@ -92,14 +92,14 @@ def handle_client(client_socket):
             data = client_socket.recv(1024)
             if not data:
                 break
-            print("Mensaje entrante", data.decode())
+            print("Dato entrante", data.decode())
             if '[' in data.decode() and ']' in data.decode():
                 timestamp = data.decode().split('[')[1].split(']')[0]
                 print("Timestamp:", timestamp)
             save_message(client_socket.getpeername()[0], data.decode())
             if data.decode().strip().lower() == '0':
                 break
-            client_socket.sendall("Mensaje recibido".encode())
+            client_socket.sendall("Dato recibido".encode())
     except Exception as e:
         print("Error", e)
     finally:
@@ -108,7 +108,7 @@ def handle_client(client_socket):
 
 def save_message(ip_address, message):
     with open("almacena.txt", "a") as file:
-        file.write(f"IP: {ip_address}, Timestamp: {time.strftime('%Y/%m/%d %H:%M:%S')}, Mensaje: {message}\n")
+        file.write(f"Datos: {message}, Dir IP: {ip_address}, Timestamp: {time.strftime('%Y/%m/%d %H:%M:%S')}\n")
 
 def print_history():
     try:
