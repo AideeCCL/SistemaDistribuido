@@ -86,7 +86,7 @@ def connect_to_remote_server(local_ipv4):
                         break
                     message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {message}"
                     client_socket.sendall(message_with_timestamp.encode())
-                    save_message("localhost", message_with_timestamp)
+                    save_message(local_ipv4, message_with_timestamp)
                     response = client_socket.recv(1024)
                     print("\n", response.decode())
         else:
