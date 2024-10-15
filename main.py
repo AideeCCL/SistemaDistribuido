@@ -31,7 +31,7 @@ def main():
 
 def start_server():
     try:
-        with open("ip.txt", "r") as file:
+        with open("dir.txt", "r") as file:
             server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == get_ipv4()]
 
         if server_info:
@@ -56,16 +56,16 @@ def start_server():
 
 def connect_to_remote_server(local_ipv4):
     try:
-        with open("ip.txt", "r") as file:
-            ip = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
+        with open("dir.txt", "r") as file:
+            remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
 
         print("\nElija la direccion a la que desee entrar:")
-        for i, (ip, port) in enumerate(ip, 1):
+        for i, (ip, port) in enumerate(remote_servers, 1):
             print("{i}. {ip}:{port}")
 
         opc = int(input("\nNumero de direccion: "))
-        if 1 <= opc <= len(ip):
-            remote_address, port = ip[opc - 1]
+        if 1 <= opc <= len(remote_servers):
+            remote_address, port = remote_servers[opc - 1]
             port = int(port)
 
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
