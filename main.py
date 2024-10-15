@@ -3,7 +3,7 @@ import time
 import threading
 
 def main():
-    server_thread = threading.Thread(target=servidor)
+    server_thread = threading.Thread(target=start_server)
     server_thread.start()
 
     while True:
@@ -35,7 +35,7 @@ def coneccion():
         print("Se ha detectado un error:", e)
         return None
 
-def servidor():
+def start_server():
     try:
         with open("catalogo.txt", "r") as file:
             server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == coneccion()]
@@ -51,7 +51,6 @@ def servidor():
 
             server_socket.bind((ip, port))
             server_socket.listen(5)
-            #print(f"\nDireccion: {ip} \nPuerto: {port}")
             while True:
                 client_socket, client_address = server_socket.accept()
                 connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
@@ -60,6 +59,7 @@ def servidor():
                 client_thread.start()
     except Exception as e:
         print("\nError", e)
+
 
 def connect_to_remote_server(local_ipv4):
     try:
