@@ -16,7 +16,7 @@ def main():
         opc = input("\nElija la opcion a realizar:")
 
         if opc == '1':
-            connect_to_remote_server(coneccion())
+            instruccion_datos(coneccion())
         elif opc == '2':
             print("\nConecciones")
             print_history()
@@ -46,9 +46,7 @@ def servidor():
         else:
             print("IP denegada")
             return
-
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-
             server_socket.bind((ip, port))
             server_socket.listen(5)
             while True:
@@ -60,14 +58,12 @@ def servidor():
     except Exception as e:
         print("\nError", e)
 
-def connect_to_remote_server(local_ipv4):
+def instruccion_datos(local_ipv4):
     try:
         with open("catalogo.txt", "r") as file:
             remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
-
         for i, (ip, port) in enumerate(remote_servers, 1):
             print(f"{i} : dir {ip} puerto {port}")
-
         choice = int(input("\nElija con quien desea la coneccion:"))
         if 1 <= choice <= len(remote_servers):
             remote_address, port = remote_servers[choice - 1]
