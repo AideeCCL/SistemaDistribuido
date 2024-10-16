@@ -1,6 +1,7 @@
 import socket
 import time
 import threading
+import sys
 
 def main():
     server_thread = threading.Thread(target=servidor)
@@ -18,10 +19,11 @@ def main():
         if opc == '1':
             instruccion_datos(conexion())
         elif opc == '2':
-            print("\nConecciones")
+            print("\nConexiones")
             guardados_datos()
         elif opc == '3':
-            break
+            print("Saliendo del programa...")
+            sys.exit(0)
         else:
             print("\nError")
 
@@ -41,44 +43,44 @@ def servidor():
             server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == conexion()]
 
         if server_info:
-            ip, port = server_info[0]
-            port = int(port)
+            ip, puerto = server_info[0]
+            puerto = int(puerto)
         else:
             print("IP denegada")
             return
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-            server_socket.bind((ip, port))
+            server_socket.bind((ip, puerto))
             server_socket.listen(5)
             while True:
                 conecta_cliente, client_address = server_socket.accept()
-                connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
-                print(f"\nConexion: {client_address} \nTiempo: {connection_time}")
+                #connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
+                print(f"\nConexion: {client_address} \nTiempo: {time.strftime('%Y/%m/%d %H:%M:%S')}")
                 client_thread = threading.Thread(target=cliente, args=(conecta_cliente,))
                 client_thread.start()
     except Exception as e:
         print("\nError", e)
 
-def instruccion_datos(local_ipv4):
+def instruccion_datos(ip_host):
     try:
         with open("catalogo.txt", "r") as file:
-            remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == local_ipv4]
-        for i, (ip, port) in enumerate(remote_servers, 1):
-            print(f"{i} : dir {ip} puerto {port}")
-        choice = int(input("\nElija con quien desea la coneccion:"))
-        if 1 <= choice <= len(remote_servers):
-            remote_address, port = remote_servers[choice - 1]
-            port = int(port)
+            remote_servers = [line.strip().split() for line in file.readlines() if not line.strip().split()[0] == ip_host]
+        for i, (ip, puerto) in enumerate(remote_servers, 1):
+            print(f"{i} : dir {ip} puerto {puerto}")
+        op = int(input("\nElija con quien desea la coneccion:"))
+        if 1 <= op <= len(remote_servers):
+            remote_address, puerto = remote_servers[op - 1]
+            puerto = int(puerto)
 
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conecta_cliente:
-                conecta_cliente.connect((remote_address, port))
-                print("Direccion IP conectada:", remote_address, "\nPuerto ", port)
+                conecta_cliente.connect((remote_address, puerto))
+                print("Direccion IP conectada:", remote_address, "\nPuerto ", puerto)
                 while True:
                     instruccion = input("\nDesea enviar un dato (0 si desea salir):")
                     if instruccion.lower() == '0':
                         break
                     message_with_timestamp = f"[{time.strftime('%Y/%m/%d %H:%M:%S')}] {instruccion}"
                     conecta_cliente.sendall(message_with_timestamp.encode())
-                    almacen_datos(local_ipv4, message_with_timestamp)
+                    almacen_datos(ip_host, message_with_timestamp)
                     respuestad = conecta_cliente.recv(1024)
                     print("\n", respuestad.decode())
         else:
@@ -104,7 +106,7 @@ def cliente(conecta_cliente):
         print("Error", e)
     finally:
         conecta_cliente.close()
-        print("Fin")
+        print("\nFin de la conexion externa")
 
 def almacen_datos(ip_address, instruccion):
     with open("almacena.txt", "a") as file:
@@ -116,5 +118,5 @@ def guardados_datos():
             print(file.read())
     except FileNotFoundError:
         print("VACIO")
-
+        
 main()
