@@ -31,8 +31,8 @@ def conexion():
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))
-            ip_address = s.getsockname()[0]
-            return ip_address
+            #ip_address = s.getsockname()[0]
+            return s.getsockname()[0]
     except Exception as e:
         print("Se ha detectado un error:", e)
         return None
@@ -41,7 +41,6 @@ def servidor():
     try:
         with open("catalogo.txt", "r") as file:
             server_info = [line.strip().split() for line in file.readlines() if line.strip().split()[0] == conexion()]
-
         if server_info:
             ip, puerto = server_info[0]
             puerto = int(puerto)
@@ -53,7 +52,6 @@ def servidor():
             server_socket.listen(5)
             while True:
                 conecta_cliente, client_address = server_socket.accept()
-                #connection_time = time.strftime('%Y/%m/%d %H:%M:%S')
                 print(f"\nConexion: {client_address} \nTiempo: {time.strftime('%Y/%m/%d %H:%M:%S')}")
                 client_thread = threading.Thread(target=cliente, args=(conecta_cliente,))
                 client_thread.start()
@@ -70,7 +68,6 @@ def instruccion_datos(ip_host):
         if 1 <= op <= len(remote_servers):
             remote_address, puerto = remote_servers[op - 1]
             puerto = int(puerto)
-
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conecta_cliente:
                 conecta_cliente.connect((remote_address, puerto))
                 print("Direccion IP conectada:", remote_address, "\nPuerto ", puerto)
@@ -118,5 +115,5 @@ def guardados_datos():
             print(file.read())
     except FileNotFoundError:
         print("VACIO")
-        
+
 main()
